@@ -117,8 +117,8 @@
 				label = "firmware";
 			};
 
-			partition@0xfd0000 {
-				reg = <0xfd0000 0x10000>;
+			partition@0xff0000 {
+				reg = <0xff0000 0x10000>;
 				label = "art";
 				read-only;
 			};
