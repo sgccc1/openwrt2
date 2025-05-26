@@ -25,31 +25,11 @@ HOST_CONFIGURE_VARS += \
 	CC="$(HOSTCC_NOCACHE)" \
 	CXX="$(HOSTCXX_NOCACHE)" \
 	MAKEFLAGS="$(HOST_JOBS)" \
-	CXXFLAGS="$(HOST_CFLAGS)" \
-	MAKE="$(STAGING_DIR_HOST)/bin/ninja"
+	CXXFLAGS="$(HOST_CFLAGS)"
 
 HOST_CONFIGURE_ARGS := \
 	$(if $(MAKE_JOBSERVER),--parallel="$(MAKE_JOBSERVER)") \
-	--prefix="$(STAGING_DIR_HOST)" \
-	--system-expat \
-	--system-liblzma \
-	--system-zlib \
-	--system-zstd \
-	--generator=Ninja
-
-HOST_LDFLAGS += -Wl,-rpath,$(STAGING_DIR_HOST)/lib
-
-define Host/Compile/Default
-	+$(NINJA) -C $(HOST_BUILD_DIR) $(1)
-endef
-
-define Host/Install/Default
-	+$(NINJA) -C $(HOST_BUILD_DIR) install
-endef
-
-define Host/Uninstall/Default
-	+$(NINJA) -C $(HOST_BUILD_DIR) uninstall
-endef
+	--prefix=$(STAGING_DIR_HOST)
 
 ifneq ($(findstring c,$(OPENWRT_VERBOSE)),)
   HOST_MAKE_FLAGS += VERBOSE=1
