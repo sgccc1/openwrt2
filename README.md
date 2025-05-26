@@ -1,48 +1,50 @@
-![OpenWrt logo](include/logo.png)
+首先装好 Linux 系统，推荐 Debian 或 Ubuntu LTS
 
-OpenWrt Project is a Linux operating system targeting embedded devices. Instead
-of trying to create a single, static firmware, OpenWrt provides a fully
-writable filesystem with package management. This frees you from the
-application selection and configuration provided by the vendor and allows you
-to customize the device through the use of packages to suit any application.
-For developers, OpenWrt is the framework to build an application without having
-to build a complete firmware around it; for users this means the ability for
-full customization, to use the device in ways never envisioned.
+安装编译依赖
 
-Sunshine!
+sudo apt update -y
+sudo apt full-upgrade -y
+sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+bzip2 ccache clang cmake cpio curl device-tree-compiler flex gawk gcc-multilib g++-multilib gettext \
+genisoimage git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev \
+libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev \
+libreadline-dev libssl-dev libtool llvm lrzsz msmtp ninja-build p7zip p7zip-full patch pkgconf \
+python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion \
+swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
+下载源代码，更新 feeds 并选择配置
 
-## Download
+git clone https://github.com/coolsnowwolf/lede
+cd lede
+./scripts/feeds update -a
+./scripts/feeds install -a
+make menuconfig
+下载 dl 库，编译固件 （-j 后面是线程数，第一次编译推荐用单线程）
 
-Built firmware images are available for many architectures and come with a
-package selection to be used as WiFi home router. To quickly find a factory
-image usable to migrate from a vendor stock firmware to OpenWrt, try the
-*Firmware Selector*.
+make download -j8
+make V=s -j1
+本套代码保证肯定可以编译成功。里面包括了 R24 所有源代码，包括 IPK 的。
 
-* [OpenWrt Firmware Selector](https://firmware-selector.openwrt.org/)
+你可以自由使用，但源码编译二次发布请注明我的 GitHub 仓库链接。谢谢合作！
 
-If your device is supported, please follow the **Info** link to see install
-instructions or consult the support resources listed below.
+二次编译：
 
-## 
+cd lede
+git pull
+./scripts/feeds update -a
+./scripts/feeds install -a
+make defconfig
+make download -j8
+make V=s -j$(nproc)
+如果需要重新配置：
 
-An advanced user may require additional or specific package. (Toolchain, SDK, ...) For everything else than simple firmware download, try the wiki download page:
+rm -rf .config
+make menuconfig
+make V=s -j$(nproc)
+编译完成后输出路径：bin/targets
 
-* [OpenWrt Wiki Download](https://openwrt.org/downloads)
 
-## Development
 
-To build your own firmware you need a GNU/Linux, BSD or macOS system (case
-sensitive filesystem required). Cygwin is unsupported because of the lack of a
-case sensitive file system.
 
-### Requirements
-
-You need the following tools to compile OpenWrt, the package names vary between
-distributions. A complete list with distribution specific packages is found in
-the [Build System Setup](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem)
-documentation.
-
-```
 binutils bzip2 diff find flex gawk gcc-6+ getopt grep install libc-dev libz-dev
 make4.1+ perl python3.7+ rsync subversion unzip which
 ```
